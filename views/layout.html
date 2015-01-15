@@ -66,13 +66,13 @@
 </head>
 
 <body>
-  <!-- Navbar ================================================== --
+  <!-- Navbar ================================================== -->
   <div class="navbar navbar-inverse">
     <div class="flash">{{=response.flash or ''}}</div>
     <div class="navbar-inner">
       <div class="container">
         {{is_mobile=request.user_agent().is_mobile}}
-        <!-- the next tag is necessary for bootstrap menus, do not remove --
+        <!-- the next tag is necessary for bootstrap menus, do not remove -->
         <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse" style="{{='display:none;' if not is_mobile else ''}}">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -84,7 +84,7 @@
           {{if response.menu:}}
           {{=MENU(response.menu, _class='mobile-menu nav' if is_mobile else 'nav',mobile=is_mobile,li_class='dropdown',ul_class='dropdown-menu')}}
           {{pass}}
-        </div><!--/.nav-collapse --
+        </div><!--/.nav-collapse -->
       </div>
     </div>
   </div><!--/top navbar -->
