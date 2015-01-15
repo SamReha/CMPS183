@@ -8,60 +8,8 @@
 ## - download is for downloading files uploaded in the db (does streaming)
 ## - api is an example of Hypermedia API support and access control
 #########################################################################
-
-def index():
-    """
-    This index appears when you go to bboard/default/index . 
-    """
-    # We want to generate an index of the posts. 
-    posts = db().select(db.bboard.ALL)
-    return dict(posts=posts)
-
-@auth.requires_login()
-def add():
-    """Add a post."""
-    form = SQLFORM(db.bboard)
-    if form.process().accepted:
-        # Successful processing.
-        session.flash = T("inserted")
-        redirect(URL('default', 'index'))
-    return dict(form=form)
-
-def view():
-    """View a post."""
-    # p = db(db.bboard.id == request.args(0)).select().first()
-    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
-    form = SQLFORM(db.bboard, record=p, readonly=True)
-    # p.name would contain the name of the poster.
-    return dict(form=form)
-
-@auth.requires_login()
-def edit():
-    """View a post."""
-    # p = db(db.bboard.id == request.args(0)).select().first()
-    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
-    if p.user_id != auth.user_id:
-        session.flash = T('Not authorized.')
-        redirect(URL('default', 'index'))
-    form = SQLFORM(db.bboard, record=p)
-    if form.process().accepted:
-        session.flash = T('Updated')
-        redirect(URL('default', 'view', args=[p.id]))
-    # p.name would contain the name of the poster.
-    return dict(form=form)
-
-@auth.requires_login()
-@auth.requires_signature()
-def delete():
-    """Deletes a post."""
-    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
-    if p.user_id != auth.user_id:
-        session.flash = T('Not authorized.')
-        redirect(URL('default', 'index'))
-    db(db.bboard.id == p.id).delete()
-    redirect(URL('default', 'index'))
     
-def index2():
+def index():
     """Better index."""
     # Let's get all data. 
     q = db.bboard
@@ -104,6 +52,7 @@ def index2():
         paginate=2,
         )
     return dict(form=form)
+
 
 def user():
     """
