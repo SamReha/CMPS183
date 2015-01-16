@@ -13,7 +13,7 @@ def index():
     """Better index."""
     # Let's get all data. 
     q = db.bboard
-    
+
     def generate_del_button(row):
         # If the record is ours, we can delete it.
         b = ''
@@ -22,7 +22,7 @@ def index():
         return b
     
     def generate_edit_button(row):
-        # If the record is ours, we can delete it.
+        # If the record is ours, we can edit it.
         b = ''
         if auth.user_id == row.user_id:
             b = A('Edit', _class='btn', _href=URL('default', 'edit', args=[row.id]))
@@ -34,8 +34,8 @@ def index():
     # Creates extra buttons.
 
     links = [
-        dict(header='', body = generate_del_button),
         dict(header='', body = generate_edit_button),
+        dict(header='', body = generate_del_button),
         ]
 
     if len(request.args) == 0:
@@ -49,9 +49,54 @@ def index():
                 db.bboard.bbmessage],
         editable=False, deletable=False,
         links=links,
-        paginate=2,
+        paginate=25,
+        csv=False,
         )
     return dict(form=form)
+
+@auth.requires_login()
+def add():
+    """Add a listing."""
+    form = SQLFORM(db.bboard)
+    if form.process().accepted:
+        # Successful processing.
+        session.flash = T("inserted")
+        redirect(URL('default', 'index'))
+    return dict(form=form)
+
+def view():
+    """View a post."""
+    # p = db(db.bboard.id == request.args(0)).select().first()
+    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
+    form = SQLFORM(db.bboard, record=p, readonly=True)
+    # p.name would contain the name of the poster.
+    return dict(form=form)
+
+@auth.requires_login()
+def edit():
+    """View a post."""
+    # p = db(db.bboard.id == request.args(0)).select().first()
+    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
+    if p.user_id != auth.user_id:
+        session.flash = T('Not authorized.')
+        redirect(URL('default', 'index'))
+    form = SQLFORM(db.bboard, record=p)
+    if form.process().accepted:
+        session.flash = T('Updated')
+        redirect(URL('default', 'view', args=[p.id]))
+    # p.name would contain the name of the poster.
+    return dict(form=form)
+
+@auth.requires_login()
+@auth.requires_signature()
+def delete():
+    """Deletes a post."""
+    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
+    if p.user_id != auth.user_id:
+        session.flash = T('Not authorized.')
+        redirect(URL('default', 'index'))
+    db(db.bboard.id == p.id).delete()
+    redirect(URL('default', 'index'))
 
 
 def user():
