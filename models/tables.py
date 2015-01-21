@@ -37,12 +37,10 @@ db.samslist.category.requires = IS_IN_SET(CATEGORY)
 db.samslist.category.default = 'Misc'
 db.samslist.category.required = True
 db.samslist.price.required = True
-db.samslist.image.required = IS_IMAGE(extensions=('gif', 'jpg', 'jpeg', 'png'),
-                                      minsize=(0, 0),
-                                      error_message="Oops! That's not an image file.")
+db.samslist.image.requires = IS_IMAGE(error_message="Oops! That's not an image file.")
 
 
-db.define_table('bboard',
+""" db.define_table('bboard',
                 Field('name'),
                 Field('user_id', db.auth_user),
                 Field('phone'),
@@ -64,4 +62,4 @@ db.bboard.user_id.writable = db.bboard.user_id.readable = False
 db.bboard.email.requires = IS_EMAIL()
 db.bboard.category.requires = IS_IN_SET(CATEGORY)
 db.bboard.category.default = 'Misc'
-db.bboard.category.required = True
+db.bboard.category.required = True """
