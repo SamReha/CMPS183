@@ -12,7 +12,7 @@
 def index():
     """Better index."""
     # Let's get all data. 
-    q = db.bboard
+    q = db.samslist
 
     def generate_del_button(row):
         # If the record is ours, we can delete it.
@@ -29,7 +29,7 @@ def index():
         return b
 
     def shorten_post(row):
-        return row.bbmessage[:10] + '...'
+        return row.description[:10] + '...'
 
     # Creates extra buttons.
 
@@ -41,12 +41,14 @@ def index():
     if len(request.args) == 0:
         # We are in the main index.
         links.append(dict(header='Post', body = shorten_post))
-        db.bboard.bbmessage.readable = False
+        db.samslist.description.readable = False
 
     form = SQLFORM.grid(q,
-        fields=[db.bboard.user_id, db.bboard.date_posted, 
-                db.bboard.category, db.bboard.title, 
-                db.bboard.bbmessage],
+        fields=[db.samslist.user_id,
+                db.samslist.title,
+                db.samslist.date_posted,
+                db.samslist.category,
+                db.samslist.description],
         editable=False, deletable=False,
         links=links,
         paginate=25,
@@ -57,7 +59,7 @@ def index():
 @auth.requires_login()
 def add():
     """Add a listing."""
-    form = SQLFORM(db.bboard)
+    form = SQLFORM(db.samslist)
     if form.process().accepted:
         # Successful processing.
         session.flash = T("inserted")
@@ -66,21 +68,21 @@ def add():
 
 def view():
     """View a post."""
-    # p = db(db.bboard.id == request.args(0)).select().first()
-    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
-    form = SQLFORM(db.bboard, record=p, readonly=True)
+    # p = db(db.samslist.id == request.args(0)).select().first()
+    p = db.samslist(request.args(0)) or redirect(URL('default', 'index'))
+    form = SQLFORM(db.samslist, record=p, readonly=True)
     # p.name would contain the name of the poster.
     return dict(form=form)
 
 @auth.requires_login()
 def edit():
     """View a post."""
-    # p = db(db.bboard.id == request.args(0)).select().first()
-    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
+    # p = db(db.samslist.id == request.args(0)).select().first()
+    p = db.samslist(request.args(0)) or redirect(URL('default', 'index'))
     if p.user_id != auth.user_id:
         session.flash = T('Not authorized.')
         redirect(URL('default', 'index'))
-    form = SQLFORM(db.bboard, record=p)
+    form = SQLFORM(db.samslist, record=p)
     if form.process().accepted:
         session.flash = T('Updated')
         redirect(URL('default', 'view', args=[p.id]))
@@ -91,11 +93,11 @@ def edit():
 @auth.requires_signature()
 def delete():
     """Deletes a post."""
-    p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
+    p = db.samslist(request.args(0)) or redirect(URL('default', 'index'))
     if p.user_id != auth.user_id:
         session.flash = T('Not authorized.')
         redirect(URL('default', 'index'))
-    db(db.bboard.id == p.id).delete()
+    db(db.samslist.id == p.id).delete()
     redirect(URL('default', 'index'))
 
 
