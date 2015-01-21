@@ -34,6 +34,7 @@ db.samslist.id.readable = False
 db.samslist.user_id.default = auth.user_id
 db.samslist.user_id.writable = db.samslist.user_id.readable = False
 db.samslist.name.default = get_first_name()
+db.samslist.phone.requires = IS_MATCH('^$')
 db.samslist.phone.required = True
 db.samslist.email.requires = IS_EMAIL()
 db.samslist.category.requires = IS_IN_SET(CATEGORY)
