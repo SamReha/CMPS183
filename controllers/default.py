@@ -8,10 +8,10 @@
 ## - download is for downloading files uploaded in the db (does streaming)
 ## - api is an example of Hypermedia API support and access control
 #########################################################################
-    
+
 def index():
     """Better index."""
-    # Let's get all data. 
+    # Let's get all data.
     q = db.samslist
 
     def generate_del_button(row):
@@ -20,7 +20,7 @@ def index():
         if auth.user_id == row.user_id:
             b = A('Delete', _class='btn', _href=URL('default', 'delete', args=[row.id]))
         return b
-    
+
     def generate_edit_button(row):
         # If the record is ours, we can edit it.
         b = ''
@@ -49,7 +49,8 @@ def index():
                 db.samslist.date_posted,
                 db.samslist.category,
                 db.samslist.description],
-        editable=False, deletable=False,
+        editable=False,
+        deletable=False,
         links=links,
         paginate=25,
         csv=False,
@@ -77,7 +78,6 @@ def view():
 @auth.requires_login()
 def edit():
     """View a post."""
-    # p = db(db.samslist.id == request.args(0)).select().first()
     p = db.samslist(request.args(0)) or redirect(URL('default', 'index'))
     if p.user_id != auth.user_id:
         session.flash = T('Not authorized.')
@@ -90,7 +90,6 @@ def edit():
     return dict(form=form)
 
 @auth.requires_login()
-@auth.requires_signature()
 def delete():
     """Deletes a post."""
     p = db.samslist(request.args(0)) or redirect(URL('default', 'index'))
