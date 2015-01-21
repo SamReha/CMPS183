@@ -38,17 +38,14 @@ def index():
         dict(header='', body = generate_del_button),
         ]
 
-    if len(request.args) == 0:
-        # We are in the main index.
-        links.append(dict(header='Post', body = shorten_post))
-        db.samslist.description.readable = False
-
     form = SQLFORM.grid(q,
         fields=[db.samslist.user_id,
+                db.samslist.name,
                 db.samslist.title,
                 db.samslist.date_posted,
                 db.samslist.category,
-                db.samslist.description],
+                db.samslist.description,
+                db.samslist.sold_out],
         editable=False,
         deletable=False,
         links=links,
