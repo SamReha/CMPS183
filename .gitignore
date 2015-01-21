@@ -3,3 +3,5 @@ cache
 errors
 uploads
 sessions
+databases
+progress.log
